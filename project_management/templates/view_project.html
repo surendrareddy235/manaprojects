@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+    <title>{{ project.project_name }} - Details</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<style>
+  .img-container{max-height:300px;overflow:hidden;border-radius:8px}
+  .gallery-container{overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px}
+  .gallery-scroll{display:flex;gap:16px}
+  .gallery-item{flex:0 0 auto;width:200px;height:200px;scroll-snap-align:start;border-radius:8px;overflow:hidden;box-shadow:0 4px 8px rgba(0,0,0,.1);transition:transform .3s}
+  .gallery-item:hover{transform:scale(1.05)}
+  .gallery-item img{width:100%;height:100%;object-fit:cover;cursor:pointer}
+  .file-icon{width:24px;margin-right:10px}
+</style>
+
+<div class="container py-4">
+
+  <!-- Back / Edit / Delete buttons -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <a href="{{ url_for('project.projects') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Back to Projects
+    </a>
+    {% if current_user.is_authenticated  %}
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('project.edit_project', project_id=project.project_id) }}" class="btn btn-primary">
+        <i class="bi bi-pencil-square"></i> Edit
+      </a>
+      <form action="{{ url_for('project.delete_project', project_id=project.project_id) }}" method="POST"
+            onsubmit="return confirm('Are you sure you want to delete this project?');">
+        <button type="submit" class="btn btn-danger">
+          <i class="bi bi-trash"></i> Delete
+        </button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="card border-0 shadow-lg">
+    <div class="card-body p-4">
+
+      <!-- Thumbnail -->
+      {% if project.project_thumbnail %}
+      <div class="img-container mb-4">
+        <img src="data:image/jpeg;base64,{{ project.project_thumbnail | b64encode }}"
+             alt="Thumbnail" class="img-fluid w-100" loading="lazy">
+      </div>
+      {% endif %}
+
+      <!-- Name & Price -->
+      <h1 class="mb-3">{{ project.project_name }}</h1>
+      <span class="badge bg-primary fs-6 mb-4">₹{{ project.project_price }}</span>
+
+      <!-- Description -->
+      <h5>Description</h5>
+      <p class="text-muted">{{ project.project_description }}</p>
+
+      <!-- Technologies -->
+      {% if project.project_technologies %}
+      <h5>Technologies</h5>
+      <div class="mb-4">
+        {% for tech in project.project_technologies.split(',') %}
+        <span class="badge bg-light text-dark fs-6 me-1 mb-1">{{ tech.strip() }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Gallery (static fields) -->
+      <h5 class="mb-3">Gallery</h5>
+      <div class="gallery-container mb-4">
+        <div class="gallery-scroll">
+          {% for i in range(1, 6) %}
+            {% set img = project.__dict__.get('project_image_' ~ i) %}
+            {% if img %}
+            <div class="gallery-item">
+              <img src="data:image/jpeg;base64,{{ img | b64encode }}"
+                   alt="Image {{ i }}" loading="lazy"
+                   data-full="data:image/jpeg;base64,{{ img | b64encode }}">
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Single file download -->
+      {% if project.project_file and project.project_file_name %}
+      <h5 class="mb-3">Download</h5>
+      <div class="list-group mb-2">
+        <a href="{{ url_for('project.download_file', project_id=project.project_id) }}"
+           class="list-group-item list-group-item-action d-flex align-items-center">
+          <i class="bi bi-file-earmark-arrow-down file-icon"></i>
+          <span>{{ project.project_file_name }}</span>
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<!-- Image modal logic -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 bg-transparent">
+      <img id="modalImg" class="w-100 rounded-3 shadow">
+    </div>
+  </div>
+</div>
+<script>
+  const bsModal = new bootstrap.Modal(document.getElementById('imageModal'));
+  const modalImg = document.getElementById('modalImg');
+  document.querySelectorAll('.gallery-item img').forEach(img=>{
+    img.addEventListener('click',()=>{
+      modalImg.src = img.dataset.full || img.src;
+      bsModal.show();
+    });
+  });
+</script>
+{% endblock %}

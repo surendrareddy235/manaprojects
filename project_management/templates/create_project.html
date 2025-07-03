@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{# Optional: if base.html has title / style / script blocks, you can
+   split these into them instead of keeping everything in block content #}
+
+{% block content %}
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+
+<style>
+  .form-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 15px;
+    background-color: #f8f9fa;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+  .form-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .file-list,
+  .field-errors {
+    font-size: 0.9rem;
+  }
+  .field-errors {
+    color: #dc3545;
+  }
+</style>
+
+<div class="container form-container">
+  <h2 class="form-header">Create New Project</h2>
+
+  <form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+
+    {# ---------------- Basic fields ---------------- #}
+    <div class="mb-3">
+      {{ form.project_name.label(class="form-label") }}
+      {{ form.project_name(class="form-control") }}
+      {% if form.project_name.errors %}
+        <div class="field-errors">{{ form.project_name.errors[0] }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.project_description.label(class="form-label") }}
+      {{ form.project_description(class="form-control", rows="3") }}
+      {% if form.project_description.errors %}
+        <div class="field-errors">{{ form.project_description.errors[0] }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.project_price.label(class="form-label") }}
+      {{ form.project_price(class="form-control") }}
+      {% if form.project_price.errors %}
+        <div class="field-errors">{{ form.project_price.errors[0] }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.project_technologies.label(class="form-label") }}
+      {{ form.project_technologies(class="form-control") }}
+      {% if form.project_technologies.errors %}
+        <div class="field-errors">{{ form.project_technologies.errors[0] }}</div>
+      {% endif %}
+    </div>
+
+    {# ---------------- Thumbnail ---------------- #}
+    <div class="mb-3">
+      {{ form.project_thumbnail.label(class="form-label") }}
+      {{ form.project_thumbnail(class="form-control", id="thumbnailInput") }}
+      <div class="form-text">Upload one thumbnail image (JPG/PNG).</div>
+      <div id="thumbnailName" class="file-list"></div>
+    </div>
+
+    {# ---------------- Individual images ---------------- #}
+    {% for i in range(1, 6) %}
+  <div class="mb-3">
+    {{ form['project_image_' ~ i].label(class="form-label") }}
+    {{ form['project_image_' ~ i](class="form-control", id="imageInput{{ i }}") }}
+    <div class="form-text">Optional project image {{ i }}.</div>
+    <div id="imageName{{ i }}" class="file-list"></div>
+  </div>
+{% endfor %}
+
+
+    {# ---------------- Project file ---------------- #}
+    <div class="mb-3">
+      {{ form.project_file.label(class="form-label") }}
+      {{ form.project_file(class="form-control", id="fileInput") }}
+      <div class="form-text">Upload a ZIP / PDF / DOCX / PPTX (one file).</div>
+      <div id="fileName" class="file-list"></div>
+    </div>
+
+    {# ---------------- Submit button ---------------- #}
+    <div class="d-grid">
+      {{ form.submit(class="btn btn-primary btn-lg") }}
+    </div>
+  </form>
+</div>
+
+<script>
+  // ---------- helper: show chosen file name ----------
+  function showFileName(inputId, outputId) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    el.addEventListener("change", function () {
+      const file = this.files[0];
+      document.getElementById(outputId).textContent = file ? file.name : "";
+    });
+  }
+
+  // thumbnail
+  showFileName("thumbnailInput", "thumbnailName");
+
+  // images 1‑5
+  for (let i = 1; i <= 5; i++) {
+    showFileName("imageInput" + i, "imageName" + i);
+  }
+
+  // project file
+  showFileName("fileInput", "fileName");
+</script>
+{% endblock %}

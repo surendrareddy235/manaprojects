@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">All Contact Messages</h2>
+
+    <!-- Responsive table wrapper -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Subject</th>
+                    <th>Query</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for msg in messages %}
+                <tr>
+                    <td>{{ msg.user_id }}</td>
+                    <td>{{ msg.user_name }}</td>
+                    <td>{{ msg.user_email }}</td>
+                    <td>{{ msg.user_mobile }}</td>
+                    <td>{{ msg.email_subject }}</td>
+                    <td>{{ msg.email_query }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
