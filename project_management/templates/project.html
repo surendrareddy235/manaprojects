@@ -45,7 +45,7 @@
         <a href="{{ url_for('core.index') }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Back to Projects
         </a>
-        <a href="#" class="btn btn-primary">
+        <a href="{{ url_for('email.contact_form') }}" class="btn btn-primary">
             <i class="bi bi-envelope-fill me-1"></i> Contact Us
         </a>
     </div>
@@ -91,7 +91,7 @@
                 <div class="gallery-container">
                     <div class="gallery-scroll">
                         {% for i in range(1, 6) %}
-{% set image = project['project_image_' ~ i] %}
+                        {% set image = project['project_image_' ~ i] %}
                             {% if image %}
                             <div class="gallery-item">
                                 <img src="data:image/jpeg;base64,{{ image|b64encode }}"
@@ -102,8 +102,16 @@
                     </div>
                 </div>
             </div>
-
-
+            {% if project.project_file and project.project_file_name %}
+      <h5 class="mb-3">Download</h5>
+      <div class="list-group mb-2">
+        <a href="{{ url_for('project.download_file', project_id=project.project_id) }}"
+           class="list-group-item list-group-item-action d-flex align-items-center">
+          <i class="bi bi-file-earmark-arrow-down file-icon"></i>
+          <span>{{ project.project_file_name }}</span>
+        </a>
+      </div>
+      {% endif %}
         </div>
     </div>
 </div>

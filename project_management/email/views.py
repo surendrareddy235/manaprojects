@@ -5,11 +5,15 @@ from project_management import app
 from project_management.models import Email
 from project_management import db
 from flask_login import login_required
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'surendrareddymandala@gmail.com'
-app.config['MAIL_PASSWORD'] = 'xyqumnevpwewrauz'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 mail = Mail(app)
 email=Blueprint('email',__name__)
 
@@ -34,7 +38,7 @@ def contact_form():
         msg = Message(
             subject=form.subject.data,
             sender=form.email.data,
-            recipients=['surendrareddymandala@gmail.com'],
+            recipients=[os.getenv('MAIL_USERNAME')],
             body=(
                 f"Name:   {form.name.data}\n"
                 f"Email:  {form.email.data}\n"
@@ -49,7 +53,7 @@ def contact_form():
             return redirect(url_for('email.contact_form', error=str(e)))
 
     success = request.args.get('success')
-    error = request.args.get('error')
+    error = request.args.get('error', '')
     return render_template('form.html', form=form, success=success, error=error)
 
 @email.route('/all_contacts')
