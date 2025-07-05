@@ -7,3 +7,4 @@ pymysql
 email-validator
 flask-mail
 dotenv
+cryptography
