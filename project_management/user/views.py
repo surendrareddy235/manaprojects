@@ -30,22 +30,22 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('user.login'))
-@user.route('/register', methods=['GET', 'POST'])
-def register():
-        form = RegistrationForm()
-        if form.validate_on_submit():
-            username = form.username.data
-            user_mail = form.user_mail.data
-            password = form.password.data
-            existing_user = User.query.filter_by(user_mail=user_mail).first()
-            if existing_user:
-                flash('Email already registered.', 'danger')
-                return redirect(url_for('user.register'))
+# @user.route('/register', methods=['GET', 'POST'])
+# def register():
+#         form = RegistrationForm()
+#         if form.validate_on_submit():
+#             username = form.username.data
+#             user_mail = form.user_mail.data
+#             password = form.password.data
+#             existing_user = User.query.filter_by(user_mail=user_mail).first()
+#             if existing_user:
+#                 flash('Email already registered.', 'danger')
+#                 return redirect(url_for('user.register'))
 
-            new_user = User(username=username, user_mail=user_mail, password=password)
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Registration successful!', 'success')
-            return redirect(url_for('user.login'))
+#             new_user = User(username=username, user_mail=user_mail, password=password)
+#             db.session.add(new_user)
+#             db.session.commit()
+#             flash('Registration successful!', 'success')
+#             return redirect(url_for('user.login'))
 
-        return render_template('register.html', form=form,current_user=current_user)
+#         return render_template('register.html', form=form,current_user=current_user)
