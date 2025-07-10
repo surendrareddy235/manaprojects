@@ -67,7 +67,6 @@ def view_project(project_id):
 
 
 @project.route('/projects/<int:project_id>/download', methods=['GET'])
-@login_required
 def download_file(project_id):
     project_obj = Project.query.get_or_404(project_id)
 

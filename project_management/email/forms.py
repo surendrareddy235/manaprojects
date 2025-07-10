@@ -7,5 +7,5 @@ class ContactForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     subject=StringField('Subject' ,validators=[DataRequired()])
     query = TextAreaField('Query', validators=[DataRequired(), Length(min=10, max=1000)])
-    mobile=StringField('Mobile',validators=[DataRequired()])
+    mobile=StringField('Mobile',validators=[DataRequired(), Length(min=10, max=10)])
     submit = SubmitField('Submit Query')
